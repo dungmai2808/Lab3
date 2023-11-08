@@ -1,0 +1,4 @@
+fsm.c:21:6:clearAllLed	8	static
+fsm.c:31:6:display7SEG1	16	static
+fsm.c:86:6:display7SEG2	16	static
+fsm.c:142:6:fsm_automatic_run	8	static

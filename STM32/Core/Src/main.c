@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "software_timer.h"
 #include "button.h"
+#include "fsm.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -95,8 +96,10 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  status = INIT;
   while (1)
   {
+	  fsm_automatic_run();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -199,13 +202,13 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, R1_Pin|Y1_Pin|G1_Pin|R2_Pin
-                          |Y2_Pin|G2_Pin, GPIO_PIN_RESET);
+                          |Y2_Pin|G2_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, a1_Pin|b1_Pin|c1_Pin|d2_Pin
                           |e2_Pin|f2_Pin|g2_Pin|d1_Pin
                           |e1_Pin|f1_Pin|g1_Pin|a2_Pin
-                          |b2_Pin|c2_Pin, GPIO_PIN_RESET);
+                          |b2_Pin|c2_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : R1_Pin Y1_Pin G1_Pin R2_Pin
                            Y2_Pin G2_Pin */
@@ -240,6 +243,7 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim ) {
 	timerRun();
+	getKeyInput();
 }
 /* USER CODE END 4 */
 
