@@ -18,6 +18,10 @@ int greenDuration = 3;
 
 int status;
 
+int index_led = 0;
+int led_buffer[4] = {1 , 2 , 3 , 4};   // index 0, 1 for 2 LED in road 1
+									   // index 2, 3 for 2 LED in road 2
+
 void clearAllLed() {
 	HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(Y1_GPIO_Port, Y1_Pin, GPIO_PIN_SET);
@@ -138,6 +142,41 @@ void display7SEG2(int num) {
 	}
 }
 
+void update7SEG (int index) { // index 0, 1 for 2 LED in road 1
+	   	   	   	   	   	   	  // index 2, 3 for 2 LED in road 2
+	switch(index) {
+		case 0:
+			display7SEG1(led_buffer[index]);
+			HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, RESET);
+			HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, SET);
+			break;
+		case 1:
+			display7SEG1(led_buffer[index]);
+			HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
+			HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, RESET);
+			break;
+		case 2:
+			display7SEG2(led_buffer[index]);
+			HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, RESET);
+			HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, SET);
+			break;
+		case 3:
+			display7SEG2(led_buffer[index]);
+			HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, SET);
+			HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, RESET);
+			break;
+		default:
+			break;
+	}
+}
+
+void updateClockBuffer() {
+	led_buffer[0] = counter1 / 10;
+	led_buffer[1] = counter1 % 10;
+	led_buffer[2] = counter2 / 10;
+	led_buffer[3] = counter2 % 10;
+}
+
 
 void fsm_automatic_run() {
 	switch(status) {
@@ -154,12 +193,15 @@ void fsm_automatic_run() {
 
 			counter1 = redDuration - 1;
 			counter2 = greenDuration - 1;
-			display7SEG1(counter1);
-			display7SEG2(counter2);
+
+			index_led = 0;
+			updateClockBuffer();
+			update7SEG(index_led);
+			update7SEG(index_led+2);
 
 			setTimer1(greenDuration * 1000); // Timer 1 for Traffic Led
-			setTimer2(1000); // Timer 2 for 7SEG LED
-			break;
+			setTimer2(500);  // Timer 2 for LED scanning
+ 			break;
 		case RED_GREEN:
 	  	    if(timer1_flag == 1) {
 	  	    	//RED_GREEN -> RED_AMBER
@@ -179,12 +221,16 @@ void fsm_automatic_run() {
 	  	    	setTimer1(amberDuration * 1000);
 	  	    }
 	  	    if(timer2_flag == 1) {
-	  	    	counter1--;
-	  	    	counter2--;
-	  	    	display7SEG1(counter1);
-	  	    	display7SEG2(counter2);
+	  	    	index_led = 1 - index_led;
+	  	    	if(index_led == 0) {
+	  	    		counter1--;
+	  	    		counter2--;
+	  	    		updateClockBuffer();
+	  	    	}
+	  	    	update7SEG(index_led);
+	  	    	update7SEG(index_led+2);
 
-	  	    	setTimer2(1000);
+	  	    	setTimer2(500);
 	  	    }
 			break;
 		case RED_AMBER:
@@ -206,12 +252,16 @@ void fsm_automatic_run() {
 	  	    	setTimer1(greenDuration * 1000);
 	  	    }
 	  	    if(timer2_flag == 1) {
-	  	    	counter1--;
-	  	    	counter2--;
-	  	    	display7SEG1(counter1);
-	  	    	display7SEG2(counter2);
+	  	    	index_led = 1 - index_led;
+	  	    	if(index_led == 0) {   // khoang cach giua 2 lan index = 0 la 1s
+	  	    		counter1--;
+	  	    		counter2--;
+	  	    		updateClockBuffer();
+	  	    	}
+	  	    	update7SEG(index_led);
+	  	    	update7SEG(index_led+2);
 
-	  	    	setTimer2(1000);
+	  	    	setTimer2(500);
 	  	    }
 			break;
 		case GREEN_RED:
@@ -233,12 +283,16 @@ void fsm_automatic_run() {
 	  	    	setTimer1(amberDuration * 1000);
 	  	    }
 	  	    if(timer2_flag == 1) {
-	  	    	counter1--;
-	  	    	counter2--;
-	  	    	display7SEG1(counter1);
-	  	    	display7SEG2(counter2);
+	  	    	index_led = 1 - index_led;
+	  	    	if(index_led == 0) {  // khoang cach giua 2 lan index = 0 la 1s
+	  	    		counter1--;
+	  	    		counter2--;
+	  	    		updateClockBuffer();
+	  	    	}
+	  	    	update7SEG(index_led);
+	  	    	update7SEG(index_led+2);
 
-	  	    	setTimer2(1000);
+	  	    	setTimer2(500);
 	  	    }
 			break;
 		case AMBER_RED:
@@ -254,18 +308,22 @@ void fsm_automatic_run() {
 
 	  	  	    status = RED_GREEN;
 
-	  	  	    counter1 = greenDuration;
+	  	  	    counter1 = redDuration;
 	  	  	    counter2 = greenDuration;
 
 	  	    	setTimer1(greenDuration * 1000);
 	  	    }
 	  	    if(timer2_flag == 1) {
-	  	    	counter1--;
-	  	    	counter2--;
-	  	    	display7SEG1(counter1);
-	  	    	display7SEG2(counter2);
+	  	    	index_led = 1 - index_led;
+	  	    	if(index_led == 0) { // khoang cach giua 2 lan index = 0 la 1s
+	  	    		counter1--;
+	  	    		counter2--;
+	  	    		updateClockBuffer();
+	  	    	}
+	  	    	update7SEG(index_led);
+	  	    	update7SEG(index_led+2);
 
-	  	    	setTimer2(1000);
+	  	    	setTimer2(500);
 	  	    }
 			break;
 		case RED_MODIFY:

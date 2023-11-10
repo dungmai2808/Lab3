@@ -90,6 +90,14 @@ void Error_Handler(void);
 #define g2_GPIO_Port GPIOB
 #define BUTTON3_Pin GPIO_PIN_8
 #define BUTTON3_GPIO_Port GPIOA
+#define EN0_Pin GPIO_PIN_9
+#define EN0_GPIO_Port GPIOA
+#define EN1_Pin GPIO_PIN_10
+#define EN1_GPIO_Port GPIOA
+#define EN2_Pin GPIO_PIN_11
+#define EN2_GPIO_Port GPIOA
+#define EN3_Pin GPIO_PIN_12
+#define EN3_GPIO_Port GPIOA
 #define d1_Pin GPIO_PIN_3
 #define d1_GPIO_Port GPIOB
 #define e1_Pin GPIO_PIN_4
