@@ -1,6 +1,6 @@
-fsm.c:25:6:clearAllLed	8	static
-fsm.c:35:6:display7SEG1	16	static
-fsm.c:90:6:display7SEG2	16	static
-fsm.c:145:6:update7SEG	16	static
-fsm.c:173:6:updateClockBuffer	4	static
-fsm.c:181:6:fsm_automatic_run	8	static
+fsm.c:27:6:clearAllLed	8	static
+fsm.c:37:6:display7SEG1	16	static
+fsm.c:92:6:display7SEG2	16	static
+fsm.c:147:6:update7SEG	16	static
+fsm.c:175:6:updateClockBuffer	4	static
+fsm.c:183:6:fsm_automatic_run	8	static

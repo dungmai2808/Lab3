@@ -12,11 +12,13 @@
 
 int counter1 = 0;
 int counter2 = 0;
-int redDuration = 5;
-int amberDuration = 2;
+int redDuration = 6;
+int amberDuration = 3;
 int greenDuration = 3;
 
 int status;
+
+int setupDuration = 0;
 
 int index_led = 0;
 int led_buffer[4] = {1 , 2 , 3 , 4};   // index 0, 1 for 2 LED in road 1
@@ -232,6 +234,22 @@ void fsm_automatic_run() {
 
 	  	    	setTimer2(500);
 	  	    }
+	  	    if(isButton1Pressed() == 1) {
+	  	    	status = RED_MODIFY;
+
+	  	    	counter1 = 0;  // for duration setup, increase when button ís press and assign it to duration
+	  	    	counter2 = 2;  // for Mode status (RED_MODIFY is Mode 2)
+	  	    	index_led = 0;
+	  	    	updateClockBuffer();
+	  	    	update7SEG(index_led);
+	  	    	update7SEG(index_led+2);
+
+	  	    	setupDuration = 0; // if setupDuration is not set, the switch status can't
+	  	    	clearAllLed();
+	  	    	HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, GPIO_PIN_RESET);
+	  	    	HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, GPIO_PIN_RESET);
+	  	    	setTimer1(500);
+	  	    }
 			break;
 		case RED_AMBER:
 	  	    if(timer1_flag == 1) {
@@ -262,6 +280,22 @@ void fsm_automatic_run() {
 	  	    	update7SEG(index_led+2);
 
 	  	    	setTimer2(500);
+	  	    }
+	  	    if(isButton1Pressed() == 1) {
+	  	    	status = RED_MODIFY;
+
+	  	    	counter1 = 0;  // for duration setup, increase when button ís press and assign it to duration
+	  	    	counter2 = 2;  // for Mode status (RED_MODIFY is Mode 2)
+	  	    	index_led = 0;
+	  	    	updateClockBuffer();
+	  	    	update7SEG(index_led);
+	  	    	update7SEG(index_led+2);
+
+	  	    	setupDuration = 0; // if setupDuration is not set, the switch status can't
+	  	    	clearAllLed();
+	  	    	HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, GPIO_PIN_RESET);
+	  	    	HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, GPIO_PIN_RESET);
+	  	    	setTimer1(500);
 	  	    }
 			break;
 		case GREEN_RED:
@@ -294,6 +328,22 @@ void fsm_automatic_run() {
 
 	  	    	setTimer2(500);
 	  	    }
+	  	    if(isButton1Pressed() == 1) {
+	  	    	status = RED_MODIFY;
+
+	  	    	counter1 = 0;  // for duration setup, increase when button ís press and assign it to duration
+	  	    	counter2 = 2;  // for Mode status (RED_MODIFY is Mode 2)
+	  	    	index_led = 0;
+	  	    	updateClockBuffer();
+	  	    	update7SEG(index_led);
+	  	    	update7SEG(index_led+2);
+
+	  	    	setupDuration = 0; // if setupDuration is not set, the switch status can't
+	  	    	clearAllLed();
+	  	    	HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, GPIO_PIN_RESET);
+	  	    	HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, GPIO_PIN_RESET);
+	  	    	setTimer1(500);
+	  	    }
 			break;
 		case AMBER_RED:
 	  	    if(timer1_flag == 1) {
@@ -325,12 +375,133 @@ void fsm_automatic_run() {
 
 	  	    	setTimer2(500);
 	  	    }
+	  	    if(isButton1Pressed() == 1) {
+	  	    	status = RED_MODIFY;
+
+	  	    	counter1 = 0;  // for duration setup, increase when button ís press and assign it to duration
+	  	    	counter2 = 2;  // for Mode status (RED_MODIFY is Mode 2)
+	  	    	index_led = 0;
+	  	    	updateClockBuffer();
+	  	    	update7SEG(index_led);
+	  	    	update7SEG(index_led+2);
+
+	  	    	setupDuration = 0; // if setupDuration is not set, the switch status can't
+	  	    	clearAllLed();
+	  	    	HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, GPIO_PIN_RESET);
+	  	    	HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, GPIO_PIN_RESET);
+	  	    	setTimer1(500);
+	  	    }
 			break;
 		case RED_MODIFY:
+			if(isButton2Pressed() == 1) {
+				counter1++;
+				updateClockBuffer();
+			}
+			if(isButton3Pressed() == 1) {
+				setupDuration = 1 - setupDuration;
+			}
+			if(timer1_flag == 1) {
+				HAL_GPIO_TogglePin(R1_GPIO_Port, R1_Pin);
+				HAL_GPIO_TogglePin(R2_GPIO_Port, R2_Pin);
+				index_led = 1 - index_led;
+				update7SEG(index_led);
+				update7SEG(index_led + 2);
+				setTimer1(500);
+			}
+			if(isButton1Pressed() == 1 && setupDuration == 1) {
+				redDuration = counter1;
+	  	    	status = AMBER_MODIFY;
+
+	  	    	counter1 = 0;  // for duration setup, increase when button ís press and assign it to duration
+	  	    	counter2 = 3;  // for Mode status (AMBER_MODIFY is Mode 3)
+	  	    	index_led = 0;
+	  	    	updateClockBuffer();
+	  	    	update7SEG(index_led);
+	  	    	update7SEG(index_led+2);
+
+	  	    	setupDuration = 0; // if setupDuration is not set, the switch status can't
+	  	    	clearAllLed();
+	  	    	HAL_GPIO_WritePin(Y1_GPIO_Port, Y1_Pin, GPIO_PIN_RESET);
+	  	    	HAL_GPIO_WritePin(Y2_GPIO_Port, Y2_Pin, GPIO_PIN_RESET);
+	  	    	setTimer1(500);
+			}
 			break;
 		case AMBER_MODIFY:
+			if(isButton2Pressed() == 1) {
+				counter1++;
+				updateClockBuffer();
+			}
+			if(isButton3Pressed() == 1) {
+				setupDuration = 1 - setupDuration;
+			}
+			if(timer1_flag == 1) {
+				HAL_GPIO_TogglePin(Y1_GPIO_Port, Y1_Pin);
+				HAL_GPIO_TogglePin(Y2_GPIO_Port, Y2_Pin);
+				index_led = 1 - index_led;
+				update7SEG(index_led);
+				update7SEG(index_led + 2);
+				setTimer1(500);
+			}
+			if(isButton1Pressed() == 1 && setupDuration == 1) {
+				amberDuration = counter1;
+	  	    	status = GREEN_MODIFY;
+
+	  	    	counter1 = 0;  // for duration setup, increase when button ís press and assign it to duration
+	  	    	counter2 = 4;  // for Mode status (AMBER_MODIFY is Mode 3)
+	  	    	index_led = 0;
+	  	    	updateClockBuffer();
+	  	    	update7SEG(index_led);
+	  	    	update7SEG(index_led+2);
+
+	  	    	setupDuration = 0; // if setupDuration is not set, the switch status can't
+	  	    	clearAllLed();
+	  	    	HAL_GPIO_WritePin(G1_GPIO_Port, G1_Pin, GPIO_PIN_RESET);
+	  	    	HAL_GPIO_WritePin(G2_GPIO_Port, G2_Pin, GPIO_PIN_RESET);
+	  	    	setTimer1(500);
+			}
 			break;
 		case GREEN_MODIFY:
+			if(isButton2Pressed() == 1) {
+				counter1++;
+				updateClockBuffer();
+			}
+			if(isButton3Pressed() == 1) {
+				setupDuration = 1 - setupDuration;
+			}
+			if(timer1_flag == 1) {
+				HAL_GPIO_TogglePin(G1_GPIO_Port, G1_Pin);
+				HAL_GPIO_TogglePin(G2_GPIO_Port, G2_Pin);
+				index_led = 1 - index_led;
+				update7SEG(index_led);
+				update7SEG(index_led + 2);
+				setTimer1(500);
+			}
+			if(isButton1Pressed() == 1 && setupDuration == 1) {
+				greenDuration = counter1;
+				if(redDuration != amberDuration + greenDuration) {
+					redDuration = amberDuration + greenDuration;
+				}
+				HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(Y1_GPIO_Port, Y1_Pin, GPIO_PIN_SET);
+				HAL_GPIO_WritePin(G1_GPIO_Port, G1_Pin, GPIO_PIN_SET);
+
+		  	    HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, GPIO_PIN_SET);
+		  	    HAL_GPIO_WritePin(Y2_GPIO_Port, Y2_Pin, GPIO_PIN_SET);
+		  	    HAL_GPIO_WritePin(G2_GPIO_Port, G2_Pin, GPIO_PIN_RESET);
+
+				status = RED_GREEN;
+
+				counter1 = redDuration - 1;
+				counter2 = greenDuration - 1;
+
+				index_led = 0;
+				updateClockBuffer();
+				update7SEG(index_led);
+				update7SEG(index_led+2);
+
+				setTimer1(greenDuration * 1000); // Timer 1 for Traffic Led
+				setTimer2(500);  // Timer 2 for LED scanning
+			}
 			break;
 		default:
 			break;
