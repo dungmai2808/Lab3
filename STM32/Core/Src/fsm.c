@@ -393,7 +393,7 @@ void fsm_automatic_run() {
 	  	    }
 			break;
 		case RED_MODIFY:
-			if(isButton2Pressed() == 1) {
+			if(isButton2Pressed() == 1 && setupDuration == 0) {
 				counter1++;
 				updateClockBuffer();
 			}
@@ -427,7 +427,7 @@ void fsm_automatic_run() {
 			}
 			break;
 		case AMBER_MODIFY:
-			if(isButton2Pressed() == 1) {
+			if(isButton2Pressed() == 1 && setupDuration == 0) {
 				counter1++;
 				updateClockBuffer();
 			}
@@ -461,7 +461,7 @@ void fsm_automatic_run() {
 			}
 			break;
 		case GREEN_MODIFY:
-			if(isButton2Pressed() == 1) {
+			if(isButton2Pressed() == 1 && setupDuration == 0) {
 				counter1++;
 				updateClockBuffer();
 			}
